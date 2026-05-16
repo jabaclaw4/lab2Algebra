@@ -1,5 +1,3 @@
-# загрузка, разбивка и нормализация данных
-
 import numpy as np
 from sklearn.datasets import make_classification
 from sklearn.model_selection import train_test_split
@@ -25,10 +23,8 @@ def split_data(X, y, test_size=0.3, random_state=42):
 
 def normalize(X_train, X_test):
     # z-нормализация: считаем mean и std только по train
-    # те же параметры применяем к test — как указано в теории
     mean = X_train.mean(axis=0)
     std  = X_train.std(axis=0)
-
     X_train_norm = (X_train - mean) / std
     X_test_norm  = (X_test  - mean) / std
 

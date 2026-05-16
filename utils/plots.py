@@ -1,4 +1,4 @@
-# функции для построения всех графиков
+#функции для построения всех графиков
 import matplotlib
 matplotlib.use('TkAgg')
 import numpy as np
@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 
 
 def plot_loss_curves(models_dict, title='loss по эпохам', filename=None):
-    # models_dict = {'название': model, ...}
     fig, ax = plt.subplots(figsize=(8, 4))
 
     for label, model in models_dict.items():
@@ -36,9 +35,7 @@ def plot_decision_boundary(model, X, y, title='разделяющая грани
                    c=colors[cls], label=f'класс {cls}',
                    alpha=0.6, edgecolors='k', linewidths=0.3)
 
-    # строим разделяющую прямую w^T x + b = 0
-    # из уравнения: w[0]*x1 + w[1]*x2 + b = 0
-    # => x2 = -(w[0]*x1 + b) / w[1]
+
     x1_min, x1_max = X[:, 0].min() - 0.5, X[:, 0].max() + 0.5
     x1_range = np.linspace(x1_min, x1_max, 200)
 
@@ -59,11 +56,9 @@ def plot_decision_boundary(model, X, y, title='разделяющая грани
 
 
 def plot_accuracy_table(results, title='точность моделей'):
-    # results = [{'label': '...', 'train_acc': 0.9, 'test_acc': 0.88}, ...]
     labels     = [r['label']     for r in results]
     train_accs = [r['train_acc'] for r in results]
     test_accs  = [r['test_acc']  for r in results]
-
     x = np.arange(len(labels))
     width = 0.35
 

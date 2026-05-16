@@ -1,10 +1,10 @@
-# альтернативные функции потерь и регуляризация (доп. задание 2)
+# альтернативные функции потерь и регуляризация
 
 import numpy as np
 
 
 class PerceptronHinge:
-    # перцептрон с hinge loss, метки y должны быть в {-1, +1}
+    #перцептрон с hinge loss, метки y должны быть в {-1, +1}
     def __init__(self, n_features, seed=42):
         rng = np.random.default_rng(seed)
         self.w = rng.normal(0, 0.01, n_features)
@@ -13,17 +13,14 @@ class PerceptronHinge:
         self.val_losses = []
 
     def forward(self, X):
-        # линейный выход без sigmoid — hinge loss работает с сырыми значениями
         return X @ self.w + self.b
 
     def hinge_loss(self, y_true, y_raw):
-        # hinge loss: L = 1/m * sum(max(0, 1 - y * ŷ))
         # y_true должен быть в {-1, +1}
         return np.mean(np.maximum(0, 1 - y_true * y_raw))
 
     def fit(self, X_train, y_train, X_val, y_val, epochs=100, lr=0.1, batch_size=32):
         n = len(X_train)
-
         for epoch in range(epochs):
             idx = np.random.permutation(n)
             X_sh = X_train[idx]
@@ -34,10 +31,6 @@ class PerceptronHinge:
                 yb = y_sh[start:start + batch_size]
 
                 y_raw = self.forward(Xb)
-
-                # градиент hinge loss:
-                # если y * ŷ < 1 — точка нарушает отступ, обновляем
-                # если y * ŷ >= 1 — градиент равен нулю
                 mask = (yb * y_raw) < 1
                 grad_w = -np.mean((yb[mask, None] * Xb[mask]), axis=0) if mask.any() else np.zeros_like(self.w)
                 grad_b = -np.mean(yb[mask]) if mask.any() else 0.0
@@ -62,7 +55,7 @@ class PerceptronL2:
         rng = np.random.default_rng(seed)
         self.w = rng.normal(0, 0.01, n_features)
         self.b = 0.0
-        self.lam = lam  # коэффициент регуляризации λ
+        self.lam = lam#коэффициент регуляризации λ
         self.train_losses = []
         self.val_losses = []
 
@@ -77,7 +70,6 @@ class PerceptronL2:
         return self.sigmoid(X @ self.w + self.b)
 
     def compute_loss(self, y_true, y_pred):
-        # кросс-энтропия + l2 штраф: L = BCE + λ/2 * ||w||^2
         eps = 1e-12
         y_pred = np.clip(y_pred, eps, 1 - eps)
         bce = -np.mean(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))
@@ -91,15 +83,12 @@ class PerceptronL2:
             idx = np.random.permutation(n)
             X_sh = X_train[idx]
             y_sh = y_train[idx]
-
             for start in range(0, n, batch_size):
                 Xb = X_sh[start:start + batch_size]
                 yb = y_sh[start:start + batch_size]
-
                 y_hat = self.forward(Xb)
                 error = y_hat - yb
 
-                # градиент с l2: dL/dw = 1/m * X^T*(ŷ-y) + λ*w
                 grad_w = Xb.T @ error / len(yb) + self.lam * self.w
                 grad_b = error.mean()
 
